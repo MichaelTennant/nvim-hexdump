@@ -70,7 +70,8 @@ function M.setup(opts)
     -- Disable hexdump on save if `disable_on_write` true
     if opts.disable_on_write then
         vim.api.nvim_create_augroup("Hexdump", {})
-        vim.api.nvim_create_autocmd("DisableHexdump", {
+        vim.api.nvim_create_autocmd("BufWritePre", {
+            group = "Hexdump", 
             callback = function()
                 if get() then
                     set(false)
