@@ -47,20 +47,7 @@ function M.setup(opts)
     vim.api.nvim_create_user_command("HexdumpDisable", function() set_state(false) end, {nargs = 0})
     vim.api.nvim_create_user_command("HexdumpToggle", function() toggle_state() end, {nargs = 0})
 
-    -- Keymap options
-    if self.opts.keymap_enable_hexdump then
-        vim.keymap.set_state("n", self.opts.keymap_enable_hexdump, function() set_state(true) end)
-    end
-
-    if self.opts.keymap_disable_hexdump then
-        vim.keymap.set_state("n", self.opts.keymap_disable_hexdump, function() set_state(false) end)
-    end
-
-    if self.opts.keymap_toggle_state_hexdump then
-        vim.keymap.set_state("n", self.opts.keymap_toggle_state_hexdump, function() toggle_state() end)
-    end
-
-    -- Other options
+    -- Options
     -- `disable_on_write` true by default
     if self.opts.disable_on_write == nil then
         self.opts.disable_on_write = true
