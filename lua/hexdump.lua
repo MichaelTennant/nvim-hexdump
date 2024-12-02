@@ -1,29 +1,28 @@
 local M = {}
 
-function M.setup(opts)
-    local opts = opts or {}
-
+function M.set_stateup(opts)
     local self = {
-        isdumped = false
+        opts = opts or {}
+        dumpedfiles = {}
     }
 
-    -- Is hexdump enabled?
-    local get = function()
-        return self.isdumped
+    -- Get if hexdump enabled
+    local get_state = function()
+        return self.dumpedfiles[vim.fn.expand("%:p")] == true
     end
 
     -- Enable/Disable hexdump
     -- returns true if hexdump state changes
-    local set = function(new_dumped)
+    local set_state = function(new_dumped)
         if not self.isdumped and new_dumped then
             vim.cmd("%!xxd")
-            self.isdumped = true
+            self.dumpedfiles[vim.fn.expand("%:p")] = true
             print("Enabled hexdump.")
             return true
 
         elseif self.isdumped and not new_dumped then
             vim.cmd("%!xxd -r")
-            self.isdumped = false
+            self.dumpedfiles[vim.fn.expand("%:p")] = nil
             print("Disabled hexdump.")
             return true
 
@@ -39,46 +38,65 @@ function M.setup(opts)
 
     -- Toggle hexdump status
     -- returns true if success
-    local toggle = function()
-        return set(not get())
+    local toggle_state = function()
+        return set_state(not get_state())
     end
 
     -- Make nvim user commands so users can run functions
-    vim.api.nvim_create_user_command("HexdumpEnable", function() set(true) end, {nargs = 0})
-    vim.api.nvim_create_user_command("HexdumpDisable", function() set(false) end, {nargs = 0})
-    vim.api.nvim_create_user_command("HexdumpToggle", function() toggle() end, {nargs = 0})
+    vim.api.nvim_create_user_command("HexdumpEnable", function() set_state(true) end, {nargs = 0})
+    vim.api.nvim_create_user_command("HexdumpDisable", function() set_state(false) end, {nargs = 0})
+    vim.api.nvim_create_user_command("HexdumpToggle", function() toggle_state() end, {nargs = 0})
 
     -- Keymap options
-    if opts.keymap_enable_hexdump then
-        vim.keymap.set("n", opts.keymap_enable_hexdump, function() set(true) end)
+    if self.opts.keymap_enable_hexdump then
+        vim.keymap.set_state("n", self.opts.keymap_enable_hexdump, function() set_state(true) end)
     end
 
-    if opts.keymap_disable_hexdump then
-        vim.keymap.set("n", opts.keymap_disable_hexdump, function() set(false) end)
+    if self.opts.keymap_disable_hexdump then
+        vim.keymap.set_state("n", self.opts.keymap_disable_hexdump, function() set_state(false) end)
     end
 
-    if opts.keymap_toggle_hexdump then
-        vim.keymap.set("n", opts.keymap_toggle_hexdump, function() toggle() end)
+    if self.opts.keymap_toggle_state_hexdump then
+        vim.keymap.set_state("n", self.opts.keymap_toggle_state_hexdump, function() toggle_state() end)
     end
 
     -- Other options
     -- `disable_on_write` true by default
-    if opts.disable_on_write == nil then
-        opts.disable_on_write = true
+    if self.opts.disable_on_write == nil then
+        self.opts.disable_on_write = true
     end
 
+    -- `forbid_insert_mode` true by default
+    -- if self.opts.forbid_insert_mode == nil then
+    --     self.opts.forbid_insert_mode = true
+    -- end
+
+    -- Hexdump Autocommands
+    vim.api.nvim_create_augroup("Hexdump", {})
+
     -- Disable hexdump on save if `disable_on_write` true
-    if opts.disable_on_write then
-        vim.api.nvim_create_augroup("Hexdump", {})
+    if self.opts.disable_on_write then
         vim.api.nvim_create_autocmd("BufWritePre", {
             group = "Hexdump", 
             callback = function()
-                if get() then
-                    set(false)
+                if get_state() then
+                    set_state(false)
                 end
             end
         })
     end
+
+    -- -- Switch user to replace mode when in insert mode if `forbid_insert_mode` true
+    -- if self.opts.forbid_insert_mode then
+    --     vim.api.nvim_create_autocmd("InsertChange,InsertEnter", {
+    --         group = "Hexdump", 
+    --         callback = function()
+    --             if vim.cmd("echo v:insertmode") ~= "r" then
+    --                 vim.cmd('')
+    --             end
+    --         end
+    --     })
+    -- end
 end
 
 return M

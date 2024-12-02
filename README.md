@@ -1,8 +1,6 @@
 # Hexdump
 A neovim plug-in for patching binaries using xxd to convert the binary to a hexdump and back. 
 
-By default, in the event hexdump is enabled and the file is written to, hexdump will automatically be disabled so the file binary is written to the file instead of xxd's file. This property can be disabled by setting the `disable_on_write` option to `false`.
-
 ## Installation
 [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
@@ -13,6 +11,9 @@ By default, in the event hexdump is enabled and the file is written to, hexdump 
 }
 ```
 ### Options
+By default, if hexdump is enabled and the file is written to, hexdump will automatically be disabled so the file binary is written to the file instead of xxd's file. This property can be disabled by setting the `disable_on_write` option to `false`.
+
+**List of accepted options**
 - `keymap_enable_hexdump`
 - `keymap_disable_hexdump`
 - `keymap_toggle_hexdump`
@@ -22,7 +23,7 @@ e.g.
 ```lua
 opts = {
     keymap_toggle_hexdump = "<leader>th", 
-    disable_on_write = false
+    forbid_insert_mode = false
 }
 ```
 
@@ -34,3 +35,8 @@ opts = {
 - `HexdumpEnable`
 - `HexdumpDisable`
 - `HexdumpToggle`
+
+## TODO
+- Prevent user from modifying non-hex data in a file while enabled
+- Prevent user from replacing data in a file with non-hex data while enabled
+- Multiple hex code styles (i.e. 4d54, 4D54, 0x4d54, 0x4D54, 4d54h, 4D54h)
