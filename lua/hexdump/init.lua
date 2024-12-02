@@ -17,21 +17,19 @@ function M.setup(opts)
     -- Enable/Disable hexdump
     -- returns true if hexdump state changes
     local set = function(new_dumped)
-        if not self.dumped and new_dumped then
+        if not self.isdumped and new_dumped then
             vim.cmd("%!xxd")
-            print(not get())
             self.isdumped = true
-            -- print("Enabled hexdump.")
+            print("Enabled hexdump.")
             return true
 
-        elseif self.dumped and not new_dumped then
+        elseif self.isdumped and not new_dumped then
             vim.cmd("%!xxd -r")
-            print(not get())
             self.isdumped = false
-            -- print("Disabled hexdump.")
+            print("Disabled hexdump.")
             return true
 
-        elseif not self.dumped then
+        elseif not self.isdumped then
             print("Cannot enable hexdump. Hexdump is already enabled.")
             return false
 
