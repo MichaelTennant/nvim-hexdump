@@ -59,6 +59,7 @@ function M.setup(opts)
 
     if opts.keymap_toggle_hexdump then
         vim.keymap.set("n", opts.keymap_toggle_hexdump, function() toggle() end)
+    end
 
     -- Other options
     -- `disable_on_write` true by default
