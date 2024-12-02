@@ -1,6 +1,6 @@
 local M = {}
 
-function M.set_stateup(opts)
+function M.setup(opts)
     local self = {
         opts = opts or {},
         dumpedfiles = {}
