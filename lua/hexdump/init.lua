@@ -1,44 +1,60 @@
--- Plug-in relies on xxd command utility, 
--- ... raise error on initialisation if not installed.
-if not vim.fn.executable('xxd') then
-    error("Error cannot inialize hexdump, xxd not installed.")
-end
-
--- 'Function based' class
 local M = {}
 
-function M.new()
+function M.setup(opts)
+    local opts = opts or {}
+
     local self = {
         isdumped = false
     }
 
-    -- Getter for `isdumped`
+    -- Is hexdump enabled?
     local get = function() {
         return self.isdumped
     }
 
-    -- Setter for `isdumped`
-    -- returns true if `isdumped` changed, false otherwise
+    -- Enable/Disable hexdump
+    -- returns true if hexdump state changes
     local set = function(new_dumped) {
         if not self.dumped and new_dumped then
             vim.cmd("%!xxd")
             self.isdumped = true
+            print("Enabled hexdump.")
             return true
 
         elseif self.dumped and not new_dumped then
             vim.cmd("%!xxd -r")
             self.isdumped = false
+            print("Disabled hexdump.")
             return true
-        end
 
-        return false
+        elseif not self.dumped then
+            print("Cannot enable hexdump. Hexdump is already enabled.")
+            return false
+
+        else
+            print ("Cannot disable hexdump. Hexdump is not enabled.")
+            return false
+        end
     }
 
-    -- Toggle `isdumped` between true/false
-    -- returns true if successful, false otherwise
+    -- Toggle hexdump status
+    -- returns true if success
     local toggle = function() {
         return set(not get())
     }
+
+    -- Keymap options
+    if opts.keymap_enable_hexdump then
+        vim.keymap.set("n", opts.keymap_enable_hexdump, function() set(true) end)
+    end
+
+    if opts.keymap_disable_hexdump then
+        vim.keymap.set("n", opts.keymap_disable_hexdump, function()) set(false) end)
+    end
+
+    if opts.keymap_toggle_hexdump then
+        vim.keymap.set("n", opts.keymap_toggle_hexdump, function() toggle() end)
+    end
 
     -- Interface/Instance methods
     return {
