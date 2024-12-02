@@ -51,7 +51,7 @@ function M.setup(opts)
     end
 
     if opts.keymap_disable_hexdump then
-        vim.keymap.set("n", opts.keymap_disable_hexdump, function()) set(false) end)
+        vim.keymap.set("n", opts.keymap_disable_hexdump, function() set(false) end)
     end
 
     if opts.keymap_toggle_hexdump then
