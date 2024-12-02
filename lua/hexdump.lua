@@ -1,8 +1,6 @@
 local M = {}
 
 function M.setup(opts)
-    print("Hello from hexdump.init")
-
     local opts = opts or {}
 
     local self = {
@@ -34,7 +32,7 @@ function M.setup(opts)
             return false
 
         else
-            print ("Cannot disable hexdump. Hexdump is not enabled.")
+            print("Cannot disable hexdump. Hexdump is not enabled.")
             return false
         end
     end
@@ -44,6 +42,11 @@ function M.setup(opts)
     local toggle = function()
         return set(not get())
     end
+
+    -- Make nvim user commands so users can run functions
+    vim.api.nvim_create_user_command("HexdumpEnable", function() set(true) end, {nargs = 0})
+    vim.api.nvim_create_user_command("HexdumpDisable", function() set(false) end, {nargs = 0})
+    vim.api.nvim_create_user_command("HexdumpToggle", function() toggle() end, {nargs = 0})
 
     -- Keymap options
     if opts.keymap_enable_hexdump then
@@ -56,14 +59,24 @@ function M.setup(opts)
 
     if opts.keymap_toggle_hexdump then
         vim.keymap.set("n", opts.keymap_toggle_hexdump, function() toggle() end)
+
+    -- Other options
+    -- `disable_on_write` true by default
+    if opts.disable_on_write == nil then
+        opts.disable_on_write = true
     end
 
-    -- Interface/Instance methods
-    return {
-        get = get, 
-        set = set, 
-        toggle = toggle
-    }
+    -- Disable hexdump on save if `disable_on_write` true
+    if opts.disable_on_write then
+        vim.api.nvim_create_augroup("Hexdump", {})
+        vim.api.nvim_create_autocmd("DisableHexdump", {
+            callback = function()
+                if get() then
+                    set(false)
+                end
+            end
+        })
+    end
 end
 
 return M

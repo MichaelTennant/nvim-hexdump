@@ -1,8 +1,7 @@
+-- Hexdump requirements
+if vim.fn.has("nvim-0.7.0") ~= 1 then
+    vim.api.nvim_error_writeln("Hexdump plug-in requires at least nvim-0.7.0.")
 
--- Plug-in relies on xxd command utility, 
--- ... raise error on initialisation if not installed.
 if not vim.fn.executable('xxd') then
-    vim.api.nvim_err_writeln("Error cannot inialize hexdump, xxd not installed.")
+    vim.api.nvim_err_writeln("Hexdump plug-in requires xxd command utility.")
 end
-
-print("Hello from plugin.hexdump!")
