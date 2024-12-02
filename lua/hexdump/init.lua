@@ -1,6 +1,8 @@
 local M = {}
 
 function M.setup(opts)
+    print("Hello from hexdump.init")
+
     local opts = opts or {}
 
     local self = {
@@ -8,13 +10,13 @@ function M.setup(opts)
     }
 
     -- Is hexdump enabled?
-    local get = function() {
+    local get = function()
         return self.isdumped
-    }
+    end
 
     -- Enable/Disable hexdump
     -- returns true if hexdump state changes
-    local set = function(new_dumped) {
+    local set = function(new_dumped)
         if not self.dumped and new_dumped then
             vim.cmd("%!xxd")
             self.isdumped = true
@@ -35,13 +37,13 @@ function M.setup(opts)
             print ("Cannot disable hexdump. Hexdump is not enabled.")
             return false
         end
-    }
+    end
 
     -- Toggle hexdump status
     -- returns true if success
-    local toggle = function() {
+    local toggle = function()
         return set(not get())
-    }
+    end
 
     -- Keymap options
     if opts.keymap_enable_hexdump then
