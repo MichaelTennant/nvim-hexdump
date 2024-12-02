@@ -2,7 +2,7 @@ local M = {}
 
 function M.set_stateup(opts)
     local self = {
-        opts = opts or {}
+        opts = opts or {},
         dumpedfiles = {}
     }
 
