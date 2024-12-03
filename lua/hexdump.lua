@@ -1,13 +1,13 @@
 local M = {}
 
-function M.setup(opts)
+function M.setup()
     print("setup start")
     local self = {
         dumpedfiles = {}
     }
 
     -- Default Options
-    opts = opts or {}
+    opts = {}
 
     -- Prevents user writing hexdump of file instead of file binary to file.
     -- Defaults true.
