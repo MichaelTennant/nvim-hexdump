@@ -1,6 +1,7 @@
 local M = {}
 
 function M.setup(opts)
+    print("setup start")
     local self = {
         dumpedfiles = {}
     }
@@ -13,15 +14,6 @@ function M.setup(opts)
     if opts.disable_on_write == nil then
         opts.disable_on_write = true
     end
-
-    -- Opt removed in favour of more robust solution in the future.
-    -- -- Forces user to use REPLACE instead of INSERT mode if opt true.
-    -- -- This reduces the chance the user will change the file size resulting 
-    -- -- ... in a faulty patch.
-    -- -- Defaults true.
-    -- if opts.forbid_insert_mode == nil then
-    --     opts.forbid_insert_mode = true
-    -- end
 
     -- Get if hexdump enabled
     local get_state = function()
@@ -83,17 +75,7 @@ function M.setup(opts)
         })
     end
 
-    -- Switch to REPLACE mode if in INSERT MODE if `forbid_insert_mode` true.
-    -- if opts.forbid_insert_mode then
-    --     vim.api.nvim_create_autocmd("InsertChange,InsertEnter", {
-    --         group = "Hexdump", 
-    --         callback = function()
-    --             if vim.cmd("echo v:insertmode") ~= "r" then
-    --                 vim.cmd('')
-    --             end
-    --         end
-    --     })
-    -- end
+    print("setup end")
 end
 
 return M
