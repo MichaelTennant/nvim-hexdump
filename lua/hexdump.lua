@@ -1,18 +1,16 @@
 local M = {}
 
-function M.setup()
-    print("setup start")
+function M.setup(self)
     local self = {
+        opts = opts or {}
         dumpedfiles = {}
     }
 
     -- Default Options
-    opts = {}
-
     -- Prevents user writing hexdump of file instead of file binary to file.
     -- Defaults true.
-    if opts.disable_on_write == nil then
-        opts.disable_on_write = true
+    if self.opts.disable_on_write == nil then
+        self.opts.disable_on_write = true
     end
 
     -- Get if hexdump enabled
@@ -66,7 +64,7 @@ function M.setup()
     vim.api.nvim_create_augroup("Hexdump", {})
 
     -- Disable hexdump on save if `disable_on_write` true
-    if opts.disable_on_write then
+    if self.opts.disable_on_write then
         vim.api.nvim_create_autocmd("BufWritePre", {
             group = "Hexdump", 
             callback = function() 
@@ -74,8 +72,6 @@ function M.setup()
             end
         })
     end
-
-    print("setup end")
 end
 
 return M

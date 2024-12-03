@@ -11,6 +11,9 @@ hexdump and back.
     opts = {...}
 }
 ```
+Note that the opts args is required for lazy to load the module. If you don't
+want to pass any options just do `opts = {}`.
+
 ### Options
 By default, if hexdump is enabled and the file is written to, hexdump will 
 automatically be disabled so the file binary is written to the file instead of 
@@ -37,6 +40,7 @@ opts = {
 - `HexdumpToggle`
 
 ## TODO
+- Make module get loaded from lazy even if opts arg isn't passed
 - Custom linter while hexdump enabled
 - Multiple hex code styles (i.e. 4d54, 4D54, 0x4d54, 0x4D54, 4d54h, 4D54h)
 - Prevent user from modifying non-hex data in a file while enabled
