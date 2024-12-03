@@ -2,9 +2,26 @@ local M = {}
 
 function M.setup(opts)
     local self = {
-        opts = opts or {},
         dumpedfiles = {}
     }
+
+    -- Default Options
+    opts = opts or {}
+
+    -- Prevents user writing hexdump of file instead of file binary to file.
+    -- Defaults true.
+    if opts.disable_on_write == nil then
+        opts.disable_on_write = true
+    end
+
+    -- Opt removed in favour of more robust solution in the future.
+    -- -- Forces user to use REPLACE instead of INSERT mode if opt true.
+    -- -- This reduces the chance the user will change the file size resulting 
+    -- -- ... in a faulty patch.
+    -- -- Defaults true.
+    -- if opts.forbid_insert_mode == nil then
+    --     opts.forbid_insert_mode = true
+    -- end
 
     -- Get if hexdump enabled
     local get_state = function()
@@ -26,7 +43,7 @@ function M.setup(opts)
             print("Disabled hexdump.")
             return true
 
-        elseif get_state() then
+        elseif new_dumped then
             print("Cannot enable hexdump. Hexdump is already enabled.")
             return false
 
@@ -36,45 +53,38 @@ function M.setup(opts)
         end
     end
 
-    -- Toggle hexdump status
+    -- Toggle hexgdump status
     -- returns true if success
     local toggle_state = function()
         return set_state(not get_state())
     end
 
     -- Make nvim user commands so users can run functions
-    vim.api.nvim_create_user_command("HexdumpEnable", function() set_state(true) end, {nargs = 0})
-    vim.api.nvim_create_user_command("HexdumpDisable", function() set_state(false) end, {nargs = 0})
-    vim.api.nvim_create_user_command("HexdumpToggle", function() toggle_state() end, {nargs = 0})
-
-    -- Options
-    -- `disable_on_write` true by default
-    if self.opts.disable_on_write == nil then
-        self.opts.disable_on_write = true
-    end
-
-    -- `forbid_insert_mode` true by default
-    -- if self.opts.forbid_insert_mode == nil then
-    --     self.opts.forbid_insert_mode = true
-    -- end
+    vim.api.nvim_create_user_command("HexdumpEnable", 
+        function() set_state(true) end, {nargs = 0}
+    )
+    vim.api.nvim_create_user_command("HexdumpDisable", 
+        function() set_state(false) end, {nargs = 0}
+    )
+    vim.api.nvim_create_user_command("HexdumpToggle", 
+        function() toggle_state() end, {nargs = 0}
+    )
 
     -- Hexdump Autocommands
     vim.api.nvim_create_augroup("Hexdump", {})
 
     -- Disable hexdump on save if `disable_on_write` true
-    if self.opts.disable_on_write then
+    if opts.disable_on_write then
         vim.api.nvim_create_autocmd("BufWritePre", {
             group = "Hexdump", 
-            callback = function()
-                if get_state() then
-                    set_state(false)
-                end
+            callback = function() 
+                if get_state() then set_state(false) end
             end
         })
     end
 
-    -- -- Switch user to replace mode when in insert mode if `forbid_insert_mode` true
-    -- if self.opts.forbid_insert_mode then
+    -- Switch to REPLACE mode if in INSERT MODE if `forbid_insert_mode` true.
+    -- if opts.forbid_insert_mode then
     --     vim.api.nvim_create_autocmd("InsertChange,InsertEnter", {
     --         group = "Hexdump", 
     --         callback = function()

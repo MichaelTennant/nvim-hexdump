@@ -1,5 +1,6 @@
 # Hexdump
-A neovim plug-in for patching binaries using xxd to convert the binary to a hexdump and back. 
+A neovim plug-in for patching binaries using xxd to convert the binary to a 
+hexdump and back. 
 
 ## Installation
 [lazy.nvim](https://github.com/folke/lazy.nvim)
@@ -11,7 +12,10 @@ A neovim plug-in for patching binaries using xxd to convert the binary to a hexd
 }
 ```
 ### Options
-By default, if hexdump is enabled and the file is written to, hexdump will automatically be disabled so the file binary is written to the file instead of xxd's file. This property can be disabled by setting the `disable_on_write` option to `false`.
+By default, if hexdump is enabled and the file is written to, hexdump will 
+automatically be disabled so the file binary is written to the file instead of 
+xxd's file. This property can be disabled by setting the `disable_on_write` 
+option to `false`.
 
 **List of accepted options**
 - `disable_on_write` (default value `true`)
